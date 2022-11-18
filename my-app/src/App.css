@@ -39,3 +39,21 @@
 .todolist{
   display: flexbox;
 }
+
+.popup-confirm{
+   text-align: center;
+}
+.popupbox{
+  z-index: 100000000;
+  position: fixed;
+  left: 36%;
+  top: 35%;
+ background-color: white;
+}
+.popup-inside{
+  padding: 4rem;
+  border-radius: 30px;  
+}
+.popup-description{
+  text-align: center;
+}

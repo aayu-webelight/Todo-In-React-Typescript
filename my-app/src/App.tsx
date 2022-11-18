@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
+import Popup from "reactjs-popup";
+
 import "./App.css";
+// import Popup from "./Popup";
 
 type tasklist = {
   _id: string;
@@ -8,9 +11,10 @@ type tasklist = {
 };
 
 function App() {
-  const [onchanging, setonchanging] = useState(false);
-  const [task, setTask] = useState("");
+  const [onchanging, setonchanging] = useState<boolean>(false);
+  const [task, setTask] = useState<string>("");
   const [list, setList] = useState<tasklist[]>([]);
+  const [makepopupvisible, setmakepopupvisible] = useState(true);
 
   useEffect(() => {
     fetch("http://localhost:3002/todo/getall").then((res) => {
@@ -47,7 +51,7 @@ function App() {
   };
 
   const handleDelete = (
-    event: React.MouseEvent<HTMLInputElement>,
+    event: React.MouseEvent<HTMLButtonElement>,
     task: tasklist
   ) => {
     fetch("http://localhost:3002/todo/delete", {
@@ -68,47 +72,84 @@ function App() {
       });
     event.preventDefault();
   };
-  return (
-    <div className="App">
-      <header className="App-header">
-        <div>
-          <form onSubmit={handleAdd}>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Enter Your Task"
-              aria-label="Enter Your Task"
-              onChange={(event) => handleInput(event)}
-            />
-            <br></br>
-            <input
-              className="btn btn-primary"
-              type="submit"
-              value="Submit"
-            ></input>
-          </form>
-        </div>
 
-        <br></br>
-        <ol className="list-group list-group-numbered todolist">
-          {list.map((task: tasklist, key: number) => {
-            return (
-              <>
-                <li className="list-group-item mb-3 ms-3 " key={key}>
-                  {task.task} &nbsp;&nbsp;&nbsp;
-                  <input
-                    className="btn btn-primary"
-                    type="submit"
-                    value="Delete"
-                    onClick={(event) => handleDelete(event, task)}
-                  ></input>
-                </li>
-              </>
-            );
-          })}
-        </ol>
-      </header>
-    </div>
+  return (
+    <>
+      <div className="App">
+        <header className="App-header">
+          {makepopupvisible ? (
+            <>
+              <form onSubmit={handleAdd}>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter Your Task"
+                  aria-label="Enter Your Task"
+                  onChange={(event) => handleInput(event)}
+                />
+                <br></br>
+                <input
+                  className="btn btn-primary"
+                  type="submit"
+                  value="Submit"
+                ></input>
+              </form>
+
+              <br></br>
+              <ol className="list-group list-group-numbered todolist">
+                {list.map((task: tasklist, key: number) => {
+                  return (
+                    <>
+                      <li className="list-group-item mb-3 ms-3 " key={key}>
+                        {task.task} &nbsp;&nbsp;&nbsp;
+                        <Popup
+                          trigger={
+                            <input
+                              className="btn btn-primary"
+                              type="submit"
+                              value="Delete"
+                            ></input>
+                          }
+                          position="right center"
+                          closeOnDocumentClick
+                        >
+                         
+                          
+                            <div className="popupbox">
+                              <div className="popup-inside">
+                                <h4 className="popup-description">
+                                  Are You sure You want to Delete{task.task}
+                                </h4>
+                                <br></br>
+                                <div className="popup-confirm">
+                                  
+                                  <button
+                                    className="btn btn-primary popup-confirm"
+                                    onClick={(event) =>
+                                      handleDelete(event, task)
+                                    }
+                                  >
+                                    Confirm
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          
+                      
+                        </Popup>
+                      </li>
+                      {/* <Popup onchanging={onchanging} setonchanging={setonchanging} task={task} /> */}
+                    </>
+                  );
+                })}
+              </ol>
+            </>
+          ) : (
+            <></>
+          )}
+        </header>
+      </div>
+    </>
   );
 }
 
